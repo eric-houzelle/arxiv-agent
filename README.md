@@ -1,4 +1,5 @@
-# Agent Arxiv (LangGraph + OpenAI)
+
+# Agent Arxiv (LangGraph)
 
 Ce projet est un petit agent qui :
 - interroge Arxiv en fonction d'une requête,
@@ -80,7 +81,4 @@ llm = ChatOpenAI(model="gpt-4o-mini")
 - `.gitignore` : ignore l'environnement virtuel, les fichiers temporaires, etc.
 
 ## License
-
-À définir (MIT, Apache 2.0, …) selon ton choix.
-
-
+ Apache 2.0
