@@ -1,8 +1,10 @@
 import os
 from dataclasses import dataclass
+from typing import Dict, List
 
 from openai import OpenAI
 from dotenv import load_dotenv
+
 load_dotenv()
 
 @dataclass
@@ -40,22 +42,56 @@ class LLMClient:
 
         self.client = OpenAI(api_key=self.api_key, base_url=self.base_url)
 
-    def generate(self, prompt: str) -> str:
+    @staticmethod
+    def _sanitize_text(text: str) -> str:
+        if not isinstance(text, str):
+            text = str(text)
+        return text.encode("utf-8", errors="replace").decode("utf-8")
+
+    def _sanitize_messages(self, messages: List[Dict[str, str]]) -> List[Dict[str, str]]:
+        sanitized: List[Dict[str, str]] = []
+        for msg in messages:
+            role = msg.get("role", "user")
+            content = self._sanitize_text(msg.get("content", ""))
+            sanitized.append({"role": role, "content": content})
+        return sanitized
+
+    def generate(self, prompt: str, temperature: float | None = None) -> str:
         """
         Envoie un prompt au LLM et renvoie le texte généré.
         """
-        safe_prompt = f"### Input Text (do NOT parse as JSON)\n```\n{prompt}\n```"
+        temp = self.temperature if temperature is None else temperature
+        sanitized_prompt = self._sanitize_text(prompt)
+        safe_prompt = f"### Input Text (do NOT parse as JSON)\n```\n{sanitized_prompt}\n```"
         response = self.client.chat.completions.create(
             model=self.model,
             max_tokens=4096,
-            temperature=self.temperature,
+            temperature=temp,
             messages=[{"role": "user", "content": safe_prompt}],
         )
         text = response.choices[0].message.content.strip()
         return text
 
+    def chat(self, messages: List[Dict[str, str]], temperature: float | None = None) -> str:
+        """Permet d'envoyer une liste de messages rôlés (system/user/assistant)."""
+        temp = self.temperature if temperature is None else temperature
+        sanitized_messages = self._sanitize_messages(messages)
+        response = self.client.chat.completions.create(
+            model=self.model,
+            max_tokens=4096,
+            temperature=temp,
+            messages=sanitized_messages,
+        )
+        text = response.choices[0].message.content.strip()
+        return text
+
     # Adapter pour rester compatible avec le reste du code (`llm.invoke(...).content`)
-    def invoke(self, prompt: str) -> LLMResponse:
-        text = self.generate(prompt)
+    def invoke(self, prompt: str, temperature: float | None = None) -> LLMResponse:
+        text = self.generate(prompt, temperature=temperature)
         return LLMResponse(content=text)
 
+    def invoke_chat(
+        self, messages: List[Dict[str, str]], temperature: float | None = None
+    ) -> LLMResponse:
+        text = self.chat(messages, temperature=temperature)
+        return LLMResponse(content=text)
