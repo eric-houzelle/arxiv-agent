@@ -3,3 +3,5 @@ langgraph
 arxiv
 python-dotenv
 openai
+requests
+pypdf
