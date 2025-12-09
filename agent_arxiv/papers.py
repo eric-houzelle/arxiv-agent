@@ -22,6 +22,9 @@ def collect_scored_papers(state: State) -> List[Dict[str, Any]]:
     return sorted(scored, key=lambda paper: paper["score_value"], reverse=True)
 
 
+SUMMARY_CHAR_LIMIT = 600
+
+
 def format_linkedin_brief(papers: List[Dict[str, Any]]) -> str:
     sections: List[str] = []
     for idx, paper in enumerate(papers, start=1):
@@ -41,8 +44,8 @@ def format_linkedin_brief(papers: List[Dict[str, Any]]) -> str:
 
         summary_source = paper.get("analysis") or paper.get("abstract") or ""
         summary = summary_source.strip()
-        if len(summary) > 1200:
-            summary = summary[:1200] + "..."
+        if len(summary) > SUMMARY_CHAR_LIMIT:
+            summary = summary[:SUMMARY_CHAR_LIMIT].rstrip() + "..."
 
         block_lines = [
             f"Paper #{idx}: {paper.get('title', 'Unknown title')}",

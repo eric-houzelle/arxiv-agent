@@ -9,7 +9,12 @@ from pypdf import PdfReader
 from cache import load_cache, paper_id_from_url, save_cache
 from llm_client import LLMClient
 
-from .config import DEFAULT_CATEGORIES, linkedin_language, linkedin_temperature
+from .config import (
+    DEFAULT_CATEGORIES,
+    LINKEDIN_CHARACTER_LIMIT,
+    linkedin_language,
+    linkedin_temperature,
+)
 from .papers import collect_scored_papers
 from .prompts import (
     LINKEDIN_SYSTEM_PROMPT,
@@ -36,7 +41,7 @@ def build_arxiv_query(categories: List[str] | None = None) -> str:
 
 
 def search_arxiv(state: State):
-    print("🔎 Searching ArXiv...")
+    print("Searching ArXiv...")
     window_start = get_24h_window()
     query = state.get("query") or build_arxiv_query()
     search_query = arxiv.Search(
@@ -202,3 +207,4 @@ def write_linkedin_post(state: State):
     state["linkedin_post"] = post
     state["top_papers"] = top_papers
     return state
+

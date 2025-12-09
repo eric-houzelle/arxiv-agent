@@ -4,6 +4,7 @@ from .config import (
     CRITERIA_PROMPT_FILES,
     PROMPTS_DIR,
     REPO_URL,
+    LINKEDIN_CHARACTER_LIMIT,
 )
 from .papers import format_linkedin_brief
 
@@ -108,7 +109,7 @@ def build_linkedin_user_prompt(papers: List[Dict[str, Any]], language: str) -> s
         f"Write a LinkedIn post in {language} that curates the top {paper_count} AI papers "
         "from the last 24 hours.\n"
         "- Begin with a sentence explaining that here is 5 new papers from arXiv on artificial intelligence that are worth a look.\n"
-        "- Dedicate one short paragraph per paper starting with the ranking number (1. / 2. / 3. / etc.) followed with the exact paper title enclosed in double quotes (e.g., \"Attention Is All You Need\"),"
+        "- Dedicate one short paragraph (less than 400 characters) per paper starting with the ranking number (1. / 2. / 3. / etc.) followed with the exact paper title enclosed in double quotes (e.g., \"Attention Is All You Need\"),"
         " followed by the key idea, why it matters, and a concise practical takeaway.\n"
         "- Under each paragraph, add the link sentence formatted as"
         " Lien: <url>.\n"
@@ -119,6 +120,7 @@ def build_linkedin_user_prompt(papers: List[Dict[str, Any]], language: str) -> s
         " any Markdown (no bullets, numbered lists, bold, headings, or code), and write plain text"
         " sentences separated only by blank lines (with the link sentence on its own line).\n"
         "Keep the tone approachable for a broad audience: emphasize what each paper enables in practice, how it impacts teams or products, and the concrete benefits readers could expect. Use plain-language analogies, focus on use cases, and avoid dense jargon or architecture deep dives.\n"
+        f"Ensure the entire response stays under {LINKEDIN_CHARACTER_LIMIT} characters.\n"
         "Use the following research brief as context (do not list raw metadata, turn it into prose):\n"
         f"{brief}"
     )

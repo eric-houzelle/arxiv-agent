@@ -23,8 +23,8 @@ Créer un fichier `.env` à la racine (chargé automatiquement) :
 
 ```env
 AI_ENDPOINTS_ACCESS_TOKEN=votre_token
-MODEL=gpt-oss-120b
-BASE_URL=https://oai.endpoints.preprod.ai.cloud.ovh.net/v1
+MODEL=
+BASE_URL=
 LINKEDIN_POST_LANGUAGE=fr
 LINKEDIN_POST_TEMPERATURE=0.4
 ```
@@ -54,6 +54,7 @@ L’orchestration est réalisée via `agent_arxiv.workflow` qui compile un `Stat
 - **Prompt système LinkedIn** : mettre à jour `prompts/linkedin_system.md`.
 - **Langue / température** : ajuster les variables d’environnement listées plus haut.
 - **Catégories par défaut** : modifier `DEFAULT_CATEGORIES` dans `agent_arxiv/config.py`.
+- **Longueur maximale du post LinkedIn** : adapter `LINKEDIN_CHARACTER_LIMIT` dans `agent_arxiv/config.py` (par défaut 2500 caractères, conforme aux consignes).
 
 ## Structure du projet
 - `app.py` : point d’entrée CLI qui exécute le workflow et affiche les résultats.

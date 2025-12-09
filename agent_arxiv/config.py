@@ -5,6 +5,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 PROMPTS_DIR = PROJECT_ROOT / "prompts"
 DEFAULT_CATEGORIES = ["cs.CL", "cs.AI", "cs.IR", "cs.MA"]
 REPO_URL = "https://github.com/eric-houzelle/arxiv-agent"
+LINKEDIN_CHARACTER_LIMIT = 2500
 CRITERIA_PROMPT_FILES = [
     ("originalite", "Originality", "originality.md"),
     ("impact", "Technical impact", "impact.md"),
