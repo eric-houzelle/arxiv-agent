@@ -1,8 +1,10 @@
 from agent_arxiv import run_workflow
+from agent_arxiv.logger import get_logger
 from agent_arxiv.papers import collect_scored_papers, parse_score
 
 
 def main():
+    logger = get_logger(__name__)
     result = run_workflow("")
     scored_papers = collect_scored_papers(result)
     for paper in scored_papers:
@@ -12,19 +14,25 @@ def main():
             repro = scores.get("repro", scores.get("reproducibility", 0))
             potential = scores.get("potentiel", scores.get("potential", 0))
             originality = scores.get("originalite", scores.get("originality", 0))
-            print(
-                f"{paper['score_value']:.1f} - {paper['title']} "
-                f"(Tech:{impact}/Repro:{repro}/Short:{potential}/Orig:{originality})"
+            logger.info(
+                "%s - %s (Tech:%s/Repro:%s/Short:%s/Orig:%s)\n"
+                "     %s\n"
+                "     %s\n"
+                "     %s\n",
+                f"{paper['score_value']:.1f}",
+                paper["title"],
+                impact,
+                repro,
+                potential,
+                originality,
+                paper["category"],
+                paper["url"],
+                paper["abstract"],
             )
-            print(f"     {paper['category']}")
-            print(f"     {paper['url']}")
-            print(f"     {paper['abstract']}")
-            print(" ")
 
     linkedin_post = result.get("linkedin_post")
     if linkedin_post:
-        print("Suggested LinkedIn post:\n")
-        print(linkedin_post)
+        logger.info("Suggested LinkedIn post:\n%s", linkedin_post)
 
 
 if __name__ == "__main__":

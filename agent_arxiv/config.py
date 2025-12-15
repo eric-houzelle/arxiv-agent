@@ -1,5 +1,6 @@
-import os
 from pathlib import Path
+
+from pydantic import BaseSettings, Field
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 PROMPTS_DIR = PROJECT_ROOT / "prompts"
@@ -14,13 +15,29 @@ CRITERIA_PROMPT_FILES = [
 ]
 
 
+class AppSettings(BaseSettings):
+    """Configuration typée de l'application, chargée depuis l'environnement."""
+
+    linkedin_post_language: str = Field(
+        "fr", alias="LINKEDIN_POST_LANGUAGE", description="Langue du post LinkedIn"
+    )
+    linkedin_post_temperature: float = Field(
+        0.4,
+        alias="LINKEDIN_POST_TEMPERATURE",
+        description="Température de génération du post LinkedIn",
+    )
+
+    model_config = {"extra": "ignore"}
+
+
+_settings = AppSettings()  # instancié une seule fois au démarrage
+
+
 def linkedin_language() -> str:
-    return os.getenv("LINKEDIN_POST_LANGUAGE", "fr")
+    """Retourne la langue configurée pour les posts LinkedIn."""
+    return _settings.linkedin_post_language
 
 
 def linkedin_temperature() -> float:
-    value = os.getenv("LINKEDIN_POST_TEMPERATURE")
-    try:
-        return float(value) if value is not None else 0.4
-    except ValueError:
-        return 0.4
+    """Retourne la température configurée pour les posts LinkedIn."""
+    return _settings.linkedin_post_temperature
